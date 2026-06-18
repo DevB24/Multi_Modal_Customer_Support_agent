@@ -32,22 +32,22 @@ MOCK_MODE=False
 
 # Azure OpenAI Configuration
 AZURE_OPENAI_API_KEY=your_azure_openai_key
-AZURE_OPENAI_ENDPOINT=https://your-resource-name.openai.azure.com/
+AZURE_OPENAI_ENDPOINT=endpoint-link
 AZURE_OPENAI_DEPLOYMENT_NAME=gpt-5.4-nano  # or your custom deployment name
 AZURE_OPENAI_API_VERSION=2026-03-17  # or your api version
 
 # Azure AI Speech Configuration
 AZURE_SPEECH_KEY=your_azure_speech_key
-AZURE_SPEECH_ENDPOINT=https://your-resource-name.cognitiveservices.azure.com/
+AZURE_SPEECH_ENDPOINT=endpoint-link
 AZURE_SPEECH_REGION=eastus           # or your resource region
 
 # Azure AI Vision Configuration (v4.0)
 AZURE_VISION_KEY=your_azure_vision_key
-AZURE_VISION_ENDPOINT=https://your-resource-name.cognitiveservices.azure.com/
+AZURE_VISION_ENDPOINT=endpoint-link
 
 # Azure AI Language Configuration (Text Analytics)
 AZURE_LANGUAGE_KEY=your_azure_language_key
-AZURE_LANGUAGE_ENDPOINT=https://your-resource-name.cognitiveservices.azure.com/
+AZURE_LANGUAGE_ENDPOINT=endpoint-link
 ```
 
 *Note: Set `MOCK_MODE=True` to run the application offline. In mock mode, the system will simulate all Azure service calls locally without requiring real keys.*
