@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Support Agent Dashboard</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <!-- Lucide Icons for premium modern look -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+  <header>
+    <div class="header-logo">
+      <div class="logo-icon">
+        <i data-lucide="bot" style="color: white; width: 1.25rem; height: 1.25rem;"></i>
+      </div>
+      <div class="logo-text">
+        <h1>OmniChannel AI Agent</h1>
+        <p>Real-Time Multi-Modal Customer Support</p>
+      </div>
+    </div>
+    <div class="header-status">
+      <button id="reset-session-btn" class="status-badge"
+        style="cursor: pointer; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: #fca5a5;">
+        <i data-lucide="rotate-ccw" style="width: 0.85rem; height: 0.85rem;"></i> Reset Chat
+      </button>
+      <div class="status-badge">
+        <div id="mode-dot" class="status-dot mock"></div>
+        <span id="mode-text">Mock Mode</span>
+      </div>
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        <span>System Online</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-container">
+
+    <!-- LEFT PANEL: Customer Support Agent Chat -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i data-lucide="message-square" style="color: var(--accent-indigo); width: 1.1rem; height: 1.1rem;"></i>
+          Customer Chat Interface
+        </div>
+        <span id="typing-indicator" style="display: none; font-size: 0.75rem; color: var(--text-secondary);">
+          <span class="loader"></span>AI is typing...
+        </span>
+      </div>
+
+      <div class="chat-window" id="chat-window">
+        <!-- Welcoming message -->
+        <div class="message-bubble assistant">
+          Hello! Thanks for reaching out. I'm your virtual customer support assistant.
+          How can I help you today?
+          <br><br>
+          <i>Tip: You can ask about your order status, upload image of package damage, or click the microphone to speak
+            your request!</i>
+          <div class="message-meta">
+            <span>AI Assistant</span>
+            <span>Just now</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="chat-input-container">
+        <!-- Image Preview Box -->
+        <div id="image-preview-box" class="preview-container" style="display: none;">
+          <img id="image-preview" class="preview-thumbnail" src="" alt="preview">
+          <span id="image-preview-name">filename.png</span>
+          <button id="remove-image-btn" class="remove-preview">&times;</button>
+        </div>
+
+        <div class="chat-input-row">
+          <!-- Attachment Button -->
+          <button id="attach-btn" class="input-btn" title="Upload Image">
+            <i data-lucide="paperclip" style="width: 1.1rem; height: 1.1rem;"></i>
+          </button>
+          <input type="file" id="file-input" accept="image/*" style="display: none;">
+
+          <!-- Microphone Button -->
+          <button id="mic-btn" class="input-btn" title="Speak Message">
+            <i data-lucide="mic" style="width: 1.1rem; height: 1.1rem;"></i>
+          </button>
+
+          <!-- Waveform display when recording -->
+          <div id="waveform-visualizer" class="waveform-overlay">
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <span
+              style="font-size: 0.75rem; color: var(--status-negative); margin-left: 0.5rem; font-weight: 500;">Listening...</span>
+          </div>
+
+          <!-- Text Input -->
+          <input type="text" id="chat-input" class="text-input-field"
+            placeholder="Type a message or click mic to speak...">
+
+          <!-- Send Button -->
+          <button id="send-btn" class="send-btn">
+            <i data-lucide="send" style="width: 1rem; height: 1rem; margin-left: 2px;"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Human Agent Dashboard & Session Info -->
+    <div class="panel" style="background: rgba(10, 15, 30, 0.25);">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i data-lucide="sliders" style="color: var(--accent-cyan); width: 1.1rem; height: 1.1rem;"></i>
+          Supervisor & Live Monitor
+        </div>
+      </div>
+
+      <div class="dashboard-content">
+        <!-- Sentiment Gauge Card -->
+        <div class="dashboard-card">
+          <div class="card-header">
+            <span>Sentiment Analyzer</span>
+            <span>Real-Time scoring</span>
+          </div>
+          <div class="sentiment-gauge-container">
+            <div>
+              <span id="sentiment-val" class="sentiment-pill neutral">
+                <i data-lucide="meh" style="width: 0.9rem; height: 0.9rem;"></i> Neutral
+              </span>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">
+              Consecutive Negatives: <span id="negative-count"
+                style="font-weight: 700; color: var(--status-negative);">0</span>/3
+            </div>
+          </div>
+          <div class="sentiment-history-list" id="sentiment-history-list">
+            <div style="color: var(--text-muted); text-align: center; padding: 1rem;">No messages analyzed yet</div>
+          </div>
+        </div>
+
+        <!-- Mock Database Quick Reference -->
+        <div class="dashboard-card">
+          <div class="card-header">
+            <span>Mock Database Quick View</span>
+            <span>Click to copy details</span>
+          </div>
+          <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: -0.25rem;">
+            These orders represent our mock backend records. Use them in chat.
+          </p>
+          <div class="order-db-list" id="order-db-list">
+            <!-- Populated via script -->
+            <div style="text-align: center; padding: 1rem;"><span class="loader"></span> Loading orders...</div>
+          </div>
+        </div>
+
+        <!-- Escalation Details -->
+        <div class="dashboard-card" id="escalation-card" style="opacity: 0.5; border-color: rgba(255,255,255,0.03);">
+          <div class="card-header" style="color: var(--status-negative);">
+            <span>Human Handoff Monitor</span>
+            <span id="escalation-badge-text">Idle</span>
+          </div>
+
+          <div id="escalation-banner" class="escalation-banner" style="display: none;">
+            <i data-lucide="alert-triangle" style="color: var(--status-negative); fill: rgba(239, 68, 68, 0.1);"></i>
+            <div>
+              <h4 style="font-size: 0.85rem; font-weight: 700; color: white;">Escalation Triggered!</h4>
+              <p style="font-size: 0.7rem; color: var(--text-secondary);">3 consecutive negative messages detected.</p>
+            </div>
+          </div>
+
+          <div class="escalation-summary-box" id="escalation-summary-box">
+            Awaiting escalation trigger... The summary generated by Azure OpenAI will appear here automatically.
+          </div>
+
+          <!-- Live Human Agent Replies -->
+          <div class="human-chat-container" id="human-reply-section" style="display: none;">
+            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">Human Agent Reply
+              Input:</label>
+            <div class="human-chat-row">
+              <input type="text" id="human-reply-input" class="text-input-field"
+                placeholder="Type response as human agent..." style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+              <button id="human-reply-send" class="human-btn">Send Handoff</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Config & state
+    let sessionId = localStorage.getItem("support_session_id") || "sess_" + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem("support_session_id", sessionId);
+
+    let isRecording = false;
+    let selectedFile = null;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isMockMode = true;
+    let ws = null;
+    let speechRecognition = null;
+
+    // UI Elements
+    const chatWindow = document.getElementById("chat-window");
+    const chatInput = document.getElementById("chat-input");
+    const sendBtn = document.getElementById("send-btn");
+    const attachBtn = document.getElementById("attach-btn");
+    const fileInput = document.getElementById("file-input");
+    const imagePreviewBox = document.getElementById("image-preview-box");
+    const imagePreview = document.getElementById("image-preview");
+    const imagePreviewName = document.getElementById("image-preview-name");
+    const removeImageBtn = document.getElementById("remove-image-btn");
+    const micBtn = document.getElementById("mic-btn");
+    const waveformVisualizer = document.getElementById("waveform-visualizer");
+    const typingIndicator = document.getElementById("typing-indicator");
+    const sentimentVal = document.getElementById("sentiment-val");
+    const negativeCount = document.getElementById("negative-count");
+    const sentimentHistoryList = document.getElementById("sentiment-history-list");
+    const orderDbList = document.getElementById("order-db-list");
+    const escalationCard = document.getElementById("escalation-card");
+    const escalationBadgeText = document.getElementById("escalation-badge-text");
+    const escalationBanner = document.getElementById("escalation-banner");
+    const escalationSummaryBox = document.getElementById("escalation-summary-box");
+    const humanReplySection = document.getElementById("human-reply-section");
+    const humanReplyInput = document.getElementById("human-reply-input");
+    const humanReplySend = document.getElementById("human-reply-send");
+    const modeDot = document.getElementById("mode-dot");
+    const modeText = document.getElementById("mode-text");
+    const resetBtn = document.getElementById("reset-session-btn");
+
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Reset session on server and refresh client
+    resetBtn.addEventListener("click", async () => {
+      if (confirm("Are you sure you want to clear the conversation session?")) {
+        await fetch(`/api/session/${sessionId}/reset`, { method: 'POST' });
+        localStorage.removeItem("support_session_id");
+        location.reload();
+      }
+    });
+
+    // Load active config and orders from backend
+    async function initApp() {
+      // Load session status in case of page reload
+      try {
+        const res = await fetch(`/api/session/${sessionId}`);
+        if (res.ok) {
+          const session = await res.json();
+          // Restore messages
+          if (session.messages && session.messages.length > 0) {
+            chatWindow.innerHTML = ""; // Clear default
+            session.messages.forEach(msg => {
+              if (msg.role !== 'system' && msg.role !== 'tool' && msg.content) {
+                appendMessage(msg.role, msg.content, false);
+              }
+            });
+            // Restore sentiment & escalation
+            updateSentimentUI(session);
+          }
+        }
+      } catch (e) {
+        console.log("No existing session found on server, starting fresh.");
+      }
+
+      // Load Mock Orders
+      try {
+        const res = await fetch("/api/orders");
+        const orders = await res.json();
+        orderDbList.innerHTML = "";
+        orders.forEach(order => {
+          const itemText = order.items.map(i => `${i.quantity}x ${i.product_name}`).join(", ");
+          const card = document.createElement("div");
+          card.className = "order-db-item";
+          card.innerHTML = `
+            <div>
+              <span class="order-db-id">${order.order_id}</span>
+              <div style="color: var(--text-secondary); margin-top: 0.15rem;">${order.customer_name} (${order.customer_email})</div>
+              <div style="color: var(--text-muted); font-size: 0.65rem; margin-top: 0.15rem;">Items: ${itemText}</div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-weight:600; text-transform: uppercase; font-size: 0.65rem; color: ${order.status === 'delivered' ? 'var(--status-positive)' : 'var(--text-secondary)'}">${order.status}</span>
+              <div style="color: var(--text-muted); font-size: 0.6rem; margin-top: 0.15rem;">Delivered: ${order.delivery_date || 'N/A'}</div>
+            </div>
+          `;
+
+          // Click to paste Order ID
+          card.addEventListener("click", () => {
+            chatInput.value = `My Order ID is ${order.order_id}. `;
+            chatInput.focus();
+          });
+          orderDbList.appendChild(card);
+        });
+      } catch (e) {
+        orderDbList.innerHTML = `<div style="color: var(--status-negative); padding: 1rem;">Failed to fetch database orders.</div>`;
+      }
+
+      // Determine if backend runs in Mock mode
+      try {
+        const configRes = await fetch("/api/config");
+        const configData = await configRes.json();
+        isMockMode = configData.mock_mode;
+        if (isMockMode) {
+          modeDot.className = "status-dot mock";
+          modeText.innerText = "Mock Mode Active";
+        } else {
+          modeDot.className = "status-dot";
+          modeText.innerText = "Live Services Active";
+        }
+      } catch (e) {
+        isMockMode = true;
+        modeDot.className = "status-dot mock";
+        modeText.innerText = "Mock Mode Active";
+      }
+    }
+
+    // Connect to WebSocket for live agent dashboards
+    function connectWebSocket() {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      ws = new WebSocket(`${protocol}//${window.location.host}/api/ws/agent`);
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log("WebSocket Event received:", data);
+        if (data.type === "escalation" && data.session_id === sessionId) {
+          triggerEscalationUI(data.summary);
+        }
+      };
+
+      ws.onclose = () => {
+        setTimeout(connectWebSocket, 5000); // Reconnect
+      };
+    }
+
+    // Initialize Web Speech API for voice recognition
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        speechRecognition = new SpeechRecognition();
+        speechRecognition.continuous = false;
+        speechRecognition.interimResults = false;
+        speechRecognition.lang = 'en-US';
+
+        speechRecognition.onstart = () => {
+          isRecording = true;
+          micBtn.className = "input-btn recording";
+          waveformVisualizer.style.display = "flex";
+          chatInput.style.display = "none";
+        };
+
+        speechRecognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          chatInput.value = transcript;
+          loggerInfo(`Voice Transcribed: "${transcript}"`);
+        };
+
+        speechRecognition.onerror = (event) => {
+          console.error("Speech recognition error:", event.error);
+          alert("Voice transcription failed or permission denied.");
+        };
+
+        speechRecognition.onend = () => {
+          isRecording = false;
+          micBtn.className = "input-btn";
+          waveformVisualizer.style.display = "none";
+          chatInput.style.display = "block";
+          chatInput.focus();
+        };
+      }
+    }
+
+    // Fallback MediaRecorder for sending raw audio file to backend
+    async function startRecording() {
+      if (speechRecognition) {
+        speechRecognition.start();
+        return;
+      }
+      // Fallback: raw audio capture
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+          // Send to backend for transcription
+          typingIndicator.style.display = "inline-block";
+          const formData = new FormData();
+          formData.append("file", audioBlob, "speech.wav");
+          try {
+            const res = await fetch(`/api/speech/transcribe?session_id=${sessionId}`, {
+              method: 'POST',
+              body: formData
+            });
+            const data = await res.json();
+            if (data.text) {
+              chatInput.value = data.text;
+            }
+          } catch (e) {
+            console.error("Audio upload failed:", e);
+          } finally {
+            typingIndicator.style.display = "none";
+          }
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+        micBtn.className = "input-btn recording";
+        waveformVisualizer.style.display = "flex";
+        chatInput.style.display = "none";
+      } catch (e) {
+        alert("Microphone access denied or not supported in this browser.");
+      }
+    }
+
+    function stopRecording() {
+      if (speechRecognition) {
+        speechRecognition.stop();
+        return;
+      }
+      if (mediaRecorder && isRecording) {
+        mediaRecorder.stop();
+        isRecording = false;
+        micBtn.className = "input-btn";
+        waveformVisualizer.style.display = "none";
+        chatInput.style.display = "block";
+      }
+    }
+
+    micBtn.addEventListener("click", () => {
+      if (!isRecording) {
+        startRecording();
+      } else {
+        stopRecording();
+      }
+    });
+
+    // Image Upload Handlers
+    attachBtn.addEventListener("click", () => fileInput.click());
+
+    fileInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          imagePreview.src = e.target.result;
+          imagePreviewName.innerText = file.name;
+          imagePreviewBox.style.display = "flex";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    removeImageBtn.addEventListener("click", () => {
+      selectedFile = null;
+      fileInput.value = "";
+      imagePreviewBox.style.display = "none";
+    });
+
+    // Append message element to Chat window
+    function appendMessage(role, content, autoScroll = true) {
+      const bubble = document.createElement("div");
+      bubble.className = `message-bubble ${role}`;
+
+      if (role === 'system') {
+        bubble.innerText = content;
+      } else {
+        const textDiv = document.createElement("div");
+        textDiv.className = "message-text";
+
+        let formattedContent = content
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/\n/g, '<br>');
+
+        textDiv.innerHTML = formattedContent;
+        bubble.appendChild(textDiv);
+
+        const meta = document.createElement("div");
+        meta.className = "message-meta";
+
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const roleName = role === 'user' ? 'Customer' : (content.startsWith('[Human Agent]') ? 'Human Agent' : 'AI Assistant');
+        meta.innerHTML = `<span>${roleName}</span><span>${timeStr}</span>`;
+        bubble.appendChild(meta);
+
+        // Add a Speaker button for assistant replies
+        if (role === 'assistant' && !content.startsWith('[Human Agent]')) {
+          const speakBtn = document.createElement("button");
+          speakBtn.style = "background: none; border: none; cursor: pointer; color: var(--text-secondary); margin-left: 0.5rem; float: right; margin-top: 2px;";
+          speakBtn.innerHTML = '<i data-lucide="volume-2" style="width: 0.85rem; height: 0.85rem;"></i>';
+          speakBtn.title = "Listen to response";
+          speakBtn.addEventListener("click", () => speakText(textDiv.innerText));
+          bubble.appendChild(speakBtn);
+        }
+      }
+
+      chatWindow.appendChild(bubble);
+      lucide.createIcons();
+
+      if (autoScroll) {
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      }
+      return bubble;
+    }
+
+    // Text to Speech playback (tries Azure TTS endpoint, falls back to web speech synthesiser)
+    async function speakText(text) {
+      const cleanText = text.replace(/\*\*|\*/g, "");
+
+      try {
+        const res = await fetch(`/api/speech/tts?text=${encodeURIComponent(cleanText)}`, { method: 'POST' });
+        if (res.ok) {
+          const blob = await res.blob();
+          const audioUrl = URL.createObjectURL(blob);
+          const audio = new Audio(audioUrl);
+          audio.play();
+          return;
+        }
+      } catch (e) {
+        console.log("Backend TTS synthesis failed, using local browser voice.");
+      }
+
+      // Fallback: Browser Web Speech synthesis
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // Cancel current speech
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert("Text-to-speech is not supported in this browser.");
+      }
+    }
+
+    // Update the sentiment and escalation metrics in the sidebar
+    function updateSentimentUI(session) {
+      if (!session.sentiment_history || session.sentiment_history.length === 0) return;
+
+      const latest = session.sentiment_history[session.sentiment_history.length - 1];
+      const sentiment = latest.sentiment;
+
+      sentimentVal.innerText = sentiment.toUpperCase();
+      sentimentVal.className = `sentiment-pill ${sentiment}`;
+
+      if (sentiment === 'positive') {
+        sentimentVal.innerHTML = '<i data-lucide="smile" style="width: 0.9rem; height: 0.9rem;"></i> Positive';
+      } else if (sentiment === 'negative') {
+        sentimentVal.innerHTML = '<i data-lucide="frown" style="width: 0.9rem; height: 0.9rem;"></i> Negative';
+      } else {
+        sentimentVal.innerHTML = '<i data-lucide="meh" style="width: 0.9rem; height: 0.9rem;"></i> Neutral';
+      }
+
+      negativeCount.innerText = session.consecutive_negatives;
+
+      // Update rolling list
+      sentimentHistoryList.innerHTML = "";
+      session.sentiment_history.slice(-5).reverse().forEach(h => {
+        const item = document.createElement("div");
+        item.className = "sentiment-history-item";
+        item.innerHTML = `
+          <span style="color: var(--text-secondary); max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${h.text}</span>
+          <span style="font-weight:700;" class="sentiment-val ${h.sentiment}">${h.sentiment.toUpperCase()}</span>
+        `;
+        sentimentHistoryList.appendChild(item);
+      });
+
+      // Update escalation card
+      if (session.escalated) {
+        triggerEscalationUI(session.summary);
+      }
+      lucide.createIcons();
+    }
+
+    function triggerEscalationUI(summary) {
+      escalationCard.style.opacity = "1";
+      escalationCard.style.borderColor = "rgba(239, 68, 68, 0.4)";
+      escalationBadgeText.innerText = "ESCALATED";
+      escalationBadgeText.style.color = "var(--status-negative)";
+      escalationBanner.style.display = "flex";
+
+      let formattedSummary = summary
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/### (.*?)\n/g, '<h3>$1</h3>')
+        .replace(/\n/g, '<br>');
+
+      escalationSummaryBox.innerHTML = formattedSummary;
+      humanReplySection.style.display = "flex";
+
+      lucide.createIcons();
+    }
+
+    // Send chat turn
+    async function sendChatTurn() {
+      const messageText = chatInput.value.trim();
+      if (!messageText && !selectedFile) return;
+
+      chatInput.value = "";
+
+      if (selectedFile) {
+        const file = selectedFile;
+        selectedFile = null;
+        imagePreviewBox.style.display = "none";
+        fileInput.value = "";
+
+        const userImgBubble = document.createElement("div");
+        userImgBubble.className = "message-bubble user";
+        userImgBubble.innerHTML = `<div class="image-attachment"><img src="${imagePreview.src}"></div>${messageText || "Image attachment"}`;
+
+        const meta = document.createElement("div");
+        meta.className = "message-meta";
+        meta.innerHTML = `<span>Customer</span><span>${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`;
+        userImgBubble.appendChild(meta);
+        chatWindow.appendChild(userImgBubble);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        typingIndicator.style.display = "inline-block";
+
+        const formData = new FormData();
+        formData.append("file", file);
+        try {
+          const visionRes = await fetch(`/api/vision/analyze?session_id=${sessionId}`, {
+            method: 'POST',
+            body: formData
+          });
+          const analysis = await visionRes.json();
+
+          const toolBubble = document.createElement("div");
+          toolBubble.className = "message-bubble system";
+          toolBubble.innerHTML = `🔍 Vision Analyzer Result: Caption: "${analysis.caption}" | Tags: [${analysis.tags.slice(0, 4).join(', ')}] | OCR Text lines: ${analysis.ocr_text ? analysis.ocr_text.replace(/\n/g, ', ') : 'None'}`;
+          chatWindow.appendChild(toolBubble);
+
+        } catch (e) {
+          console.error("Vision upload failed:", e);
+        }
+      } else {
+        appendMessage('user', messageText);
+      }
+
+      typingIndicator.style.display = "inline-block";
+
+      try {
+        const res = await fetch("/api/chat", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: sessionId, message: messageText || "Uploaded files for analysis" })
+        });
+
+        if (!res.ok) throw new Error("Chat request failed");
+
+        const assistantBubble = appendMessage('assistant', "", false);
+        const textContainer = assistantBubble.querySelector(".message-text");
+        if (textContainer) {
+          textContainer.classList.add("streaming");
+        }
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+
+        let accumulatedContent = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split("\n");
+
+          for (let line of lines) {
+            if (line.startsWith("data: ")) {
+              const dataStr = line.substring(6);
+              if (dataStr.trim() === "[DONE]") continue;
+
+              try {
+                const data = JSON.parse(dataStr);
+
+                if (data.type === 'content') {
+                  accumulatedContent += data.content;
+                  let html = accumulatedContent
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/\n/g, '<br>');
+
+                  if (textContainer) {
+                    textContainer.innerHTML = html;
+                  }
+                }
+              } catch (e) {
+                // Ignore parser anomalies
+              }
+            }
+          }
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        if (textContainer) {
+          textContainer.classList.remove("streaming");
+        }
+
+        const sessionRes = await fetch(`/api/session/${sessionId}`);
+        if (sessionRes.ok) {
+          const session = await sessionRes.json();
+          updateSentimentUI(session);
+        }
+
+        if (accumulatedContent) {
+          speakText(accumulatedContent);
+        }
+
+      } catch (e) {
+        console.error("Chat error:", e);
+        appendMessage('assistant', "I apologize, but I'm having trouble processing your request. Please check connection and try again.");
+      } finally {
+        typingIndicator.style.display = "none";
+      }
+    }
+
+    sendBtn.addEventListener("click", sendChatTurn);
+    chatInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        sendChatTurn();
+      }
+    });
+
+    // Human supervisor send replies
+    humanReplySend.addEventListener("click", async () => {
+      const replyText = humanReplyInput.value.trim();
+      if (!replyText) return;
+      humanReplyInput.value = "";
+
+      appendMessage('assistant', `[Human Agent]: ${replyText}`);
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: "agent_reply",
+          session_id: sessionId,
+          content: replyText
+        }));
+      }
+    });
+
+    humanReplyInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        humanReplySend.click();
+      }
+    });
+
+    function loggerInfo(msg) {
+      console.log(`[CLIENT-LOG] ${msg}`);
+    }
+
+    window.addEventListener("load", () => {
+      initApp();
+      connectWebSocket();
+      initSpeechRecognition();
+    });
+  </script>
+</body>
+
+</html>

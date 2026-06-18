@@ -1,0 +1,140 @@
+[
+  {
+    "order_id": "ORD-10001",
+    "customer_name": "John Doe",
+    "customer_email": "john.doe@example.com",
+    "status": "shipped",
+    "order_date": "2026-06-01",
+    "delivery_date": "2026-06-05",
+    "tracking_number": "TRK-987654321",
+    "items": [
+      {
+        "product_name": "Wireless Headphones",
+        "quantity": 1,
+        "price": 99.99
+      },
+      {
+        "product_name": "USB-C Cable",
+        "quantity": 2,
+        "price": 14.99
+      }
+    ]
+  },
+  {
+    "order_id": "ORD-10002",
+    "customer_name": "Jane Smith",
+    "customer_email": "jane.smith@example.com",
+    "status": "returned",
+    "order_date": "2026-06-05",
+    "delivery_date": "2026-06-10",
+    "tracking_number": "TRK-123456789",
+    "items": [
+      {
+        "product_name": "Smart Watch",
+        "quantity": 1,
+        "price": 199.99
+      }
+    ]
+  },
+  {
+    "order_id": "ORD-10003",
+    "customer_name": "Bob Johnson",
+    "customer_email": "bob.j@example.com",
+    "status": "shipped",
+    "order_date": "2026-06-14",
+    "delivery_date": null,
+    "tracking_number": "TRK-456789012",
+    "items": [
+      {
+        "product_name": "Mechanical Keyboard",
+        "quantity": 1,
+        "price": 129.99
+      }
+    ]
+  },
+  {
+    "order_id": "ORD-10004",
+    "customer_name": "Alice Brown",
+    "customer_email": "alice.b@example.com",
+    "status": "delivered",
+    "order_date": "2026-06-10",
+    "delivery_date": "2026-06-12",
+    "tracking_number": "TRK-789012345",
+    "items": [
+      {
+        "product_name": "Ergonomic Mouse",
+        "quantity": 1,
+        "price": 59.99
+      },
+      {
+        "product_name": "Mouse Pad",
+        "quantity": 1,
+        "price": 19.99
+      }
+    ]
+  },
+  {
+    "order_id": "ORD-10005",
+    "customer_name": "Charlie Green",
+    "customer_email": "charlie.g@example.com",
+    "status": "placed",
+    "order_date": "2026-06-16",
+    "delivery_date": null,
+    "tracking_number": null,
+    "items": [
+      {
+        "product_name": "USB-C Hub",
+        "quantity": 1,
+        "price": 39.99
+      }
+    ]
+  },
+  {
+    "order_id": "ORD-10006",
+    "customer_name": "Emily White",
+    "customer_email": "emily.w@example.com",
+    "status": "delivered",
+    "order_date": "2026-05-18",
+    "delivery_date": "2026-05-20",
+    "tracking_number": "TRK-234567890",
+    "items": [
+      {
+        "product_name": "Bluetooth Speaker",
+        "quantity": 1,
+        "price": 79.99
+      }
+    ]
+  },
+  {
+    "order_id": "ORD-10007",
+    "customer_name": "Frank Black",
+    "customer_email": "frank.b@example.com",
+    "status": "returned",
+    "order_date": "2026-05-10",
+    "delivery_date": "2026-05-14",
+    "tracking_number": "TRK-345678901",
+    "items": [
+      {
+        "product_name": "Laptop Stand",
+        "quantity": 1,
+        "price": 49.99
+      }
+    ]
+  },
+  {
+    "order_id": "ORD-10008",
+    "customer_name": "John Doe",
+    "customer_email": "john.doe@example.com",
+    "status": "delivered",
+    "order_date": "2026-04-25",
+    "delivery_date": "2026-05-01",
+    "tracking_number": "TRK-567890123",
+    "items": [
+      {
+        "product_name": "Leather Wallet",
+        "quantity": 1,
+        "price": 29.99
+      }
+    ]
+  }
+]
