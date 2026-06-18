@@ -33,8 +33,8 @@ MOCK_MODE=False
 # Azure OpenAI Configuration
 AZURE_OPENAI_API_KEY=your_azure_openai_key
 AZURE_OPENAI_ENDPOINT=https://your-resource-name.openai.azure.com/
-AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4o  # or your custom deployment name
-AZURE_OPENAI_API_VERSION=2024-02-01  # or your api version
+AZURE_OPENAI_DEPLOYMENT_NAME=gpt-5.4-nano  # or your custom deployment name
+AZURE_OPENAI_API_VERSION=2026-03-17  # or your api version
 
 # Azure AI Speech Configuration
 AZURE_SPEECH_KEY=your_azure_speech_key
