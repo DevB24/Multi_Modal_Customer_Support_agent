@@ -148,3 +148,68 @@ The backend queries orders from a local JSON database file (`orders.json`). Belo
   - Raw database view showing standard customer order statuses.
   - Auto-generated markdown Handoff Summary panel displaying issue, sentiment trend, and recommended steps.
   - Interactive reply window allowing the supervisor to directly hijack the conversation and send chat messages to the customer.
+
+
+
+---
+
+
+
+## Architecture Diagram & Components
+
+This system is built using a modern, multi-layered architecture designed to process text, audio, and image inputs in real time, leveraging robust data storage and Azure's suite of AI services.
+
+```mermaid
+graph TD
+    classDef client fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef app fill:#0f172a,stroke:#34d399,stroke-width:2px,color:#f8fafc;
+    classDef azure fill:#0284c7,stroke:#bae6fd,stroke-width:1px,color:#f8fafc;
+    classDef data fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#f8fafc;
+
+    subgraph CLIENT["Client Layer: React Browser Client"]
+        UI["UI Components"]:::client
+        MMIO["Multi-Modal I/O<br>(Text, Audio, Image)"]:::client
+        RC["REST Client"]:::client
+        WSC["WebSockets Client"]:::client
+        SM["State Management"]:::client
+    end
+
+    subgraph APP["Application Layer: Python FastAPI Backend Server"]
+        GW["API Gateway & Router"]:::app
+        Auth["Authentication / Authorization"]:::app
+        RH["Request Handler"]:::app
+        MML["Multi-Modal Processing Logic"]:::app
+        ESI["External Services Integration"]:::app
+        
+        GW --> RH
+        Auth --> RH
+        RH --> MML
+        RH --> ESI
+    end
+
+    subgraph AZURE["Azure Services Integration"]
+        AOAI["Azure OpenAI<br>(LLM, RAG, Response Generation)"]:::azure
+        ASPEECH["Azure Speech<br>(STT, TTS, Audio Processing)"]:::azure
+        ALANG["Azure Language<br>(NLP, Sentiment, Key Phrases)"]:::azure
+        AVISION["Azure Vision<br>(OCR, Image Analysis, Visual QA)"]:::azure
+        ADLS["Azure Data Lake Storage"]:::azure
+    end
+
+    subgraph DATA["Data Layer"]
+        DB[("Customer Database<br>(PostgreSQL)<br>• Profiles<br>• History<br>• Interaction Logs")]:::data
+        KB[("Knowledge Base<br>(Vector DB)<br>• Documents<br>• FAQs<br>• Embeddings")]:::data
+    end
+
+    %% Communication Links
+    WSC <-->|"WebSockets (Audio/Real-time)"| GW
+    RC <-->|"REST API (HTTP)"| GW
+
+    ESI <--> AOAI
+    ESI <--> ASPEECH
+    ESI <--> ALANG
+    ESI <--> AVISION
+    ESI <--> ADLS
+
+    MML <--> DB
+    MML <--> KB
+```
